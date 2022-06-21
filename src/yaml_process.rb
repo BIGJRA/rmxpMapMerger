@@ -47,5 +47,24 @@ def get_horizontal_slice(table_array)
     end
     table.data = new_data
   end
-  
+  total_x = 0
+  for table in table_array
+    total_x += table.xsize
+  end
+  horizontal_table = Table.new(total_x, max_height, table_array[0].zsize)
+  curr = 0
+  for z in 0...horizontal_table.zsize
+    for y in 0...horizontal_table.ysize
+      for table_no in 0...table_array.length()
+        table_x_size = table_array[table_no].xsize
+        start = z * table_x_size * max_height + table_x_size * y
+        row = table_array[table_no].data.slice(start, table_x_size) 
+        for code in row
+          horizontal_table[curr] = code
+          curr += 1
+        end
+      end
+    end
+  end
+  return horizontal_table
 end

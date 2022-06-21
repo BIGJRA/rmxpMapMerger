@@ -39,12 +39,16 @@ if !(tables[1].data.length() == 3000)
     raise ("Value is wrong")
 end
 
-get_horizontal_slice(tables)
+thing = get_horizontal_slice(tables)
 
 if !(tables[0].data.length() == 1875)
     raise ("Value is wrong")
 end
 if !(tables[1].data.length() == 3000)
+    raise ("Value is wrong")
+end
+
+if !(thing.data.length() == 4875)
     raise ("Value is wrong")
 end
 
