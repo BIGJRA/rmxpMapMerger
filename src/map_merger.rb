@@ -15,19 +15,59 @@ def load_yaml(yaml_file)
   return data['root']
 end
 
-def merge_tables(table1, table2)
-  # returns a Table class with the merged data of table1, table2
-  return
+def write_yaml(map_object, filename)
+  #p YAML::dump(map_object)
+  File.open(filename, "w+") do |output_file|
+    yaml_content = YAML::dump({'root' => map_object})
+    #p yaml_content
+    output_file.write(yaml_content)
+  end
 end
 
-def get_layer(table, layer_num)
-  layer_area = table.xsize * table.ysize
-  return table.data.slice(layer_area * layer_num, layer_area)
+def get_merged_map(yaml_maps)
+  maps = yaml_maps
+  # returns a map object which contains the data of the merged map.
+  id = maps[0].tileset_id
+  for map in maps[1...maps.length()]
+    if map.tileset_id != id
+      puts "These maps use different tilesets. Quitting..."
+      return 
+    end
+  end
+
+  tables = maps.map {|map| map.data}
+  merged_table = merge_tables(tables)
+
+  merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize) # change these values later
+  merged_map.tileset_id = id
+  merged_map.autoplay_bgm = maps[0].autoplay_bgm
+  merged_map.bgm = maps[0].bgm
+  merged_map.autoplay_bgs = maps[0].autoplay_bgs
+  merged_map.bgs = maps[0].bgs
+  merged_map.encounter_list = maps[0].encounter_list
+  merged_map.encounter_step = maps[0].encounter_step
+  merged_map.autoplay_bgm = maps[0].autoplay_bgm
+  merged_map.events = maps[0].autoplay_bgm # will change this
+  merged_map.data = merged_table # will change this
+  #merged_map.width = maps[0].width # will change this?
+  #merged_map.height = maps[0].height # will change this?
+  return merged_map
+end
+
+def merge_tables(table_array)
+  # returns a Table class with the merged data of table1, table2
+  return get_horizontal_slice(table_array) # for now just one horizontal slice
 end
 
 def get_horizontal_slice(table_array)
   # Assumes all the data arrays in the array will fit within the 500 pixel horizontal limit
   # Produces a horizontal slice with 0 filled in in the excess vertical space
+
+  def get_layer(table, layer_num)
+    layer_area = table.xsize * table.ysize
+    return table.data.slice(layer_area * layer_num, layer_area)
+  end
+
   max_height = 0
   for table in table_array
     max_height = [max_height, table.ysize].max

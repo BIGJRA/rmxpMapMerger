@@ -8,8 +8,8 @@ require_relative 'src/validation'
 
 class DataImporterExporter
   def merge
-    # Set up the directory paths
 
+    # Set up the directory paths
     inp_path = File.expand_path($CONFIG.game_yaml_dir, __FILE__)
     out_path = File.expand_path($CONFIG.modified_yaml_dir, __FILE__)
 
@@ -28,13 +28,18 @@ class DataImporterExporter
       return
     end
     # Check if the output directory exist
+    # if not (File.exist? output_dir and File.directory? output_dir)
+    #   puts "Error: Output directory #{output_dir} does not exist."
+    #   puts "Hint: Check that the $CONFIG.data_dir variable in paths.rb is set to the correct path."
+    #   puts
+    #   exit
+    # end
+
     if not (File.exist? output_dir and File.directory? output_dir)
-      puts "Error: Output directory #{output_dir} does not exist."
-      puts "Hint: Check that the $CONFIG.data_dir variable in paths.rb is set to the correct path."
-      puts
-      exit
+      recursive_mkdir( output_dir )
     end
 
+    # Gets the map numbers to merge
     nums = '8,9' #TODO Change this to empty string in working version
     while !validate_nums_list(nums)
       puts "Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
@@ -49,17 +54,22 @@ class DataImporterExporter
         map_hash[file[3..5]] = file
       end
     end
-    p map_hash
+    # p map_hash
 
-    
+    yaml_maps = []
+    for num in map_numbers
+      yaml_maps.push(load_yaml(input_dir + map_hash[num]))
+    end
 
+    # merges the maps and writes output
+    merged_map = get_merged_map(yaml_maps)
+    target = output_dir + map_hash[map_numbers[0]]
+    target[map_numbers[0]] = "999" # Just for testing to create a new map
+    write_yaml(merged_map, target) # stores new map in the name of the first one
 
-    #obj59 = load_yaml(input_dir + '/Map059 - Peridot Ward.yaml')
-    #obj60 = load_yaml(input_dir + '/Map060 - Peridot Ward.yaml')
-    #p obj59.data.data
+    puts "Successfully wrote to " + target + "."
 
   end
-  
   
   def on_start
     # Set up the directory paths
