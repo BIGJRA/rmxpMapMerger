@@ -4,6 +4,7 @@ $PROJECT_DIR = Dir.pwd + '/'
 require_relative 'src/yaml_process'
 require_relative 'src/common'
 require_relative 'src/data_importer_exporter'
+require_relative 'src/validation'
 
 # Setup config filename
 config_filename = "config.yaml"
@@ -21,17 +22,16 @@ $CONFIG = Config.new(config)
 
 plugin = DataImporterExporter.new
 
-if $COMMAND == "merge"
-  plugin.merge
-# elsif $COMMAND == "import"
-#   plugin.on_start
-# elsif $COMMAND == "export"
-#   plugin.on_exit
-# elsif $COMMAND == "rmxp"
-#   require 'listen'
-#   require 'wdm'
+nums = '8,9' #TODO Change this to empty string in working version
+while !validate_nums_list(nums)
+  puts "Enter the map numbers you want to merge, separated by commas (no whitespace)."
+  nums = gets.chomp
+end
+map_numbers = nums.split(',').map {|num| num.rjust(3, "0") }.sort
+# p map_numbers
 
-#   plugin.on_start
+if $COMMAND == "merge"
+  plugin.merge(map_numbers)
 
 #   # Dump the system time at startup into a file to read later
 #   dump_startup_time

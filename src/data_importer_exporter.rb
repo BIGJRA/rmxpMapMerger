@@ -12,7 +12,7 @@
 #===============================================================================
 
 class DataImporterExporter
-  def merge
+  def merge(map_numbers)
     # Set up the directory paths
 
     inp_path = File.expand_path($CONFIG.game_yaml_dir, __FILE__)
@@ -40,8 +40,17 @@ class DataImporterExporter
       exit
     end
 
-    obj59 = load_yaml(input_dir + '/Map059 - Peridot Ward.yaml')
-    obj60 = load_yaml(input_dir + '/Map060 - Peridot Ward.yaml')
+    # Create map hash for easier lookup
+    map_hash = {}
+    for file in Dir.entries(input_dir)
+      if file[0..2] == "Map" && !!(file[3..5] =~ /^\d{3}$/)
+        map_hash[file[3..5]] = file
+      end
+    end
+    p map_hash
+
+    #obj59 = load_yaml(input_dir + '/Map059 - Peridot Ward.yaml')
+    #obj60 = load_yaml(input_dir + '/Map060 - Peridot Ward.yaml')
     #p obj59.data.data
 
   end
