@@ -42,7 +42,8 @@ class DataImporterExporter
 
     obj59 = load_yaml(input_dir + '/Map059 - Peridot Ward.yaml')
     obj60 = load_yaml(input_dir + '/Map060 - Peridot Ward.yaml')
-    p obj59.data.data
+    #p obj59.data.data
+
   end
   
   
