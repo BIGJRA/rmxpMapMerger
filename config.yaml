@@ -7,13 +7,13 @@
 
 # Modify this path to specify where your .yaml files reside
 
-game_yaml_dir: ../../../reborn/DataExport
+game_yaml_dir: ../../reborn/DataExport
 
 # Modify this path to specify where your modified .yaml files will go
 # TODO: replace this with the original path / remove it when i know i won't muck
 # it up
 
-modified_yaml_dir: ../../../reborn/ModifiedMaps
+modified_yaml_dir: ../../reborn/ModifiedMaps
 
 #-------------------------------------------------------------------------------
 #  Miscellaneous Parameters

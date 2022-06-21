@@ -1,13 +1,3 @@
-#===============================================================================
-# Filename:    common.rb
-#
-# Developer:   Raku (rakudayo@gmail.com)
-#              XXXX
-#
-# Description: This file contains all global variables and functions which are
-#    common to all of the import/export scripts.
-#===============================================================================
-
 # Add bin directory to the Ruby search path
 #$LOAD_PATH << "C:/bin"
 
