@@ -40,7 +40,7 @@ class DataImporterExporter
     end
 
     # Gets the map numbers to merge
-    nums = '8,9' #TODO Change this to empty string in working version
+    nums = '8,9,10,11,12,13' #TODO Change this to empty string in working version
     while !validate_nums_list(nums)
       puts "Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
       nums = gets.chomp
@@ -63,6 +63,9 @@ class DataImporterExporter
 
     # merges the maps and writes output
     merged_map = get_merged_map(yaml_maps)
+    if merged_map == nil
+      return
+    end
     target = output_dir + map_hash[map_numbers[0]]
     target[map_numbers[0]] = "999" # Just for testing to create a new map
     write_yaml(merged_map, target) # stores new map in the name of the first one

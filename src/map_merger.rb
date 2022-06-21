@@ -31,7 +31,7 @@ def get_merged_map(yaml_maps)
   for map in maps[1...maps.length()]
     if map.tileset_id != id
       puts "These maps use different tilesets. Quitting..."
-      return 
+      return nil
     end
   end
 
