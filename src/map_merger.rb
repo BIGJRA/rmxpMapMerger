@@ -32,20 +32,24 @@ end
 
 def get_merged_map(maps)
 
+  # Quits if tilesets don't match
   if not overlap?(maps, 'tileset_id')
     puts "These maps use different tilesets. Quitting..."
     return
   end
 
+  # Warns if other properties don't match
   ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step', 'autoplay_bgm'].each do |property| 
     if not overlap?(maps, property)
       puts "WARNING: These maps have different " + property + ". Using values from the first map." 
+    end
+  end
 
   tables = maps.map {|map| map.data}
   merged_table = merge_tables(tables)
 
   merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize) # change these values later
-  merged_map.tileset_id = id
+  merged_map.tileset_id = maps[0].tileset_id
   merged_map.autoplay_bgm = maps[0].autoplay_bgm
   merged_map.bgm = maps[0].bgm
   merged_map.autoplay_bgs = maps[0].autoplay_bgs
