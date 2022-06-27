@@ -40,7 +40,7 @@ class DataImporterExporter
     end
 
     # Gets the map numbers to merge
-    nums = '8,9,10,11,12,13' #TODO Change this to empty string in working version
+    nums = '59,60,61,62,63,64,65,67,68,69' #TODO Change this to empty string in working version
     while !validate_nums_list(nums)
       puts "Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
       nums = gets.chomp
