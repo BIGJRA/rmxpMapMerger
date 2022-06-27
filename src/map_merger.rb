@@ -219,8 +219,6 @@ def overlap?(maps, field_name)
       value = maps[0].send(field_name).send(prop)
       for map in maps[1...maps.length()]
         if map.send(field_name).send(prop) != value
-          p value
-          p map.send(field_name).send(prop)
           return false
         end
       end
