@@ -30,16 +30,16 @@ def write_yaml(map_object, filename)
   end
 end
 
-def get_merged_map(yaml_maps)
-  maps = yaml_maps
-  # returns a map object which contains the data of the merged map.
-  id = maps[0].tileset_id
-  for map in maps[1...maps.length()]
-    if map.tileset_id != id
-      puts "These maps use different tilesets. Quitting..."
-      return nil
-    end
+def get_merged_map(maps)
+
+  if not overlap?(maps, 'tileset_id')
+    puts "These maps use different tilesets. Quitting..."
+    return
   end
+
+  ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step', 'autoplay_bgm'].each do |property| 
+    if not overlap?(maps, property)
+      puts "WARNING: These maps have different " + property + ". Using values from the first map." 
 
   tables = maps.map {|map| map.data}
   merged_table = merge_tables(tables)
@@ -209,3 +209,12 @@ def merge_tables(table_array)
   return combine_vertical(horizontal_slices)
 end
 
+def overlap?(maps, field_name)
+  value = maps[0].send(field_name)
+  for map in maps[1...maps.length()]
+    if map.send(field_name) != value
+      return false
+    end
+  end
+  return true
+end
