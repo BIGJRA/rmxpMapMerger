@@ -53,7 +53,6 @@ class DataImporterExporter
         map_hash[file[3..5]] = file
       end
     end
-    # p map_hash
 
     yaml_maps = []
     for num in map_numbers

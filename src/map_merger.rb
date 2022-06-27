@@ -48,7 +48,7 @@ def get_merged_map(maps)
   tables = maps.map {|map| map.data}
   merged_table = merge_tables(tables)
 
-  merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize) # change these values later
+  merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize)
   merged_map.tileset_id = maps[0].tileset_id
   merged_map.autoplay_bgm = maps[0].autoplay_bgm
   merged_map.bgm = maps[0].bgm
@@ -214,10 +214,23 @@ def merge_tables(table_array)
 end
 
 def overlap?(maps, field_name)
-  value = maps[0].send(field_name)
-  for map in maps[1...maps.length()]
-    if map.send(field_name) != value
-      return false
+  if ['bgm', 'bgs'].include?(field_name)
+    for prop in ['name', 'volume', 'pitch']
+      value = maps[0].send(field_name).send(prop)
+      for map in maps[1...maps.length()]
+        if map.send(field_name).send(prop) != value
+          p value
+          p map.send(field_name).send(prop)
+          return false
+        end
+      end
+    end
+  else
+    value = maps[0].send(field_name)
+    for map in maps[1...maps.length()]
+      if map.send(field_name) != value
+        return false
+      end
     end
   end
   return true
