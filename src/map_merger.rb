@@ -69,10 +69,14 @@ def merge_tables(table_hash, offset_hash)
       max_height = [max_height, table.ysize].max
     end
   
-    for table in table_array
-      # Adds horizontal buffer region on the end of each line
-      add_empty_columns(table, HOR_BUFFER)
-  
+
+    table_array.each_with_index do |table,idx|
+
+      # Adds horizontal buffer region on the end of each line except at end
+      if idx < table_array.length - 1
+        add_empty_columns(table, HOR_BUFFER)
+      end
+
       # Adds extra vertical space to match the rest of the tables
       rows_to_add = max_height - table.ysize
       add_empty_rows(table, rows_to_add) 
@@ -114,10 +118,12 @@ def merge_tables(table_hash, offset_hash)
       max_width = [max_width, table.xsize].max
     end
   
-    for table in horizontal_slices
-  
-      # add vertical buffer to each slice
-      add_empty_rows(table, VER_BUFFER)
+    horizontal_slices.each_with_index do |table,idx|
+
+      # add vertical buffer to each slice except at end
+      if idx < horizontal_slices.length - 1
+        add_empty_rows(table, VER_BUFFER)
+      end      
       
       # Adds extra horizontal space to match the rest of the tables
       cols_to_add = max_width - table.xsize
