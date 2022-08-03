@@ -120,7 +120,9 @@ def merge_tables(table_hash, offset_hash)
     end
   
     total_y = 0
+    heights = []
     for table in horizontal_slices
+      heights.push(total_y)
       total_y += table.ysize
     end
   
@@ -136,7 +138,7 @@ def merge_tables(table_hash, offset_hash)
     for pos in 0...(max_width * total_y * horizontal_slices[0].zsize)
       vertical_table[pos] = new_data[pos]
     end
-    return vertical_table
+    return vertical_table, heights
   end
   
   def add_empty_columns(table, num_cols)
@@ -183,41 +185,39 @@ def merge_tables(table_hash, offset_hash)
   end
 
   horizontal_slices = []
+  slice_hash = {}
   width = 0
-  start = 0
-  finish = 0
+  curr = 0
 
   table_array = []
   for num in table_hash.keys
     table = table_hash[num]
-    #finish += 1
+
     if width + table.xsize + HOR_BUFFER >= HOR_MAX
-      width = 0
       horizontal_slices.push(get_horizontal_slice(table_array))
-      table_array = []
-      #start = finish
+      curr += 1
+      offset_hash[num][0] = 0
+      slice_hash[num] = curr
+      width = table.xsize
+      table_array = [table]
     else
       offset_hash[num][0] = width
-      width += table.xsize + HOR_BUFFER
+      slice_hash[num] = curr
+      width += table.xsize
       table_array.push(table)
     end
   end
+  
+  horizontal_slices.push(get_horizontal_slice(table_array))
+  
 
-  # for table in table_array
-  #   finish += 1
-  #   if width + table.xsize + HOR_BUFFER >= HOR_MAX
-  #     width = 0
-  #     horizontal_slices.push(get_horizontal_slice(table_array[start...finish]))
-  #     start = finish
-  #   else
-  #     width += table.xsize + HOR_BUFFER
-  #   end
-  # end
-  if table_array != []
-   horizontal_slices.push(get_horizontal_slice(table_array))
+  full_grid, heights = combine_vertical(horizontal_slices)
+
+  for num in slice_hash.keys
+    offset_hash[num][1] = heights[slice_hash[num]]
   end
 
-  return combine_vertical(horizontal_slices)
+  return full_grid
 end
 
 def overlap?(maps, field_name)
