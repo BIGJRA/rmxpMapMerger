@@ -429,3 +429,22 @@ def clear_backups()
     File.delete($CONFIG.backup_dir + '/' + file)
   end
 end
+
+###
+
+def load_yaml(yaml_file)
+  data = nil
+  File.open( yaml_file, "r+" ) do |input_file|
+    data = YAML::unsafe_load( input_file )
+  end
+  return data['root']
+end
+
+def write_yaml(map_object, filename)
+  #p YAML::dump(map_object)
+  File.open(filename, "w+") do |output_file|
+    yaml_content = YAML::dump({'root' => map_object})
+    #p yaml_content
+    output_file.write(yaml_content)
+  end
+end

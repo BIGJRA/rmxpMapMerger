@@ -13,24 +13,9 @@ VER_MAX = 500
 HOR_BUFFER = 10
 VER_BUFFER = 8
 
-def load_yaml(yaml_file)
-  data = nil
-  File.open( yaml_file, "r+" ) do |input_file|
-    data = YAML::unsafe_load( input_file )
-  end
-  return data['root']
-end
+def get_merged_map(map_yaml_hash, offset_hash)
 
-def write_yaml(map_object, filename)
-  #p YAML::dump(map_object)
-  File.open(filename, "w+") do |output_file|
-    yaml_content = YAML::dump({'root' => map_object})
-    #p yaml_content
-    output_file.write(yaml_content)
-  end
-end
-
-def get_merged_map(maps)
+  maps = map_yaml_hash.values
 
   # Quits if tilesets don't match
   if not overlap?(maps, 'tileset_id')
@@ -45,8 +30,11 @@ def get_merged_map(maps)
     end
   end
 
-  tables = maps.map {|map| map.data}
-  merged_table = merge_tables(tables)
+  table_hash = {}
+  for num in map_yaml_hash.keys
+    table_hash[num] = map_yaml_hash[num].data
+  end
+  merged_table = merge_tables(table_hash, offset_hash)
 
   merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize)
   merged_map.tileset_id = maps[0].tileset_id
@@ -62,7 +50,7 @@ def get_merged_map(maps)
   return merged_map
 end
 
-def merge_tables(table_array)
+def merge_tables(table_hash, offset_hash)
   # returns a Table class with the merged data of table1, table2
 
   def get_horizontal_slice(table_array)
@@ -198,17 +186,36 @@ def merge_tables(table_array)
   width = 0
   start = 0
   finish = 0
-  for table in table_array
-    finish += 1
+
+  table_array = []
+  for num in table_hash.keys
+    table = table_hash[num]
+    #finish += 1
     if width + table.xsize + HOR_BUFFER >= HOR_MAX
       width = 0
-      horizontal_slices.push(get_horizontal_slice(table_array[start...finish]))
-      start = finish
+      horizontal_slices.push(get_horizontal_slice(table_array))
+      table_array = []
+      #start = finish
     else
+      offset_hash[num][0] = width
       width += table.xsize + HOR_BUFFER
+      table_array.push(table)
     end
   end
-  horizontal_slices.push(get_horizontal_slice(table_array[start...finish]))
+
+  # for table in table_array
+  #   finish += 1
+  #   if width + table.xsize + HOR_BUFFER >= HOR_MAX
+  #     width = 0
+  #     horizontal_slices.push(get_horizontal_slice(table_array[start...finish]))
+  #     start = finish
+  #   else
+  #     width += table.xsize + HOR_BUFFER
+  #   end
+  # end
+  if table_array != []
+   horizontal_slices.push(get_horizontal_slice(table_array))
+  end
 
   return combine_vertical(horizontal_slices)
 end
