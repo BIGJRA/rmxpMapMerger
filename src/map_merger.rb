@@ -13,9 +13,15 @@ VER_MAX = 500
 HOR_BUFFER = 10
 VER_BUFFER = 8
 
-def get_merged_map(map_yaml_hash, offset_hash)
+def get_merged_map(map_yaml_hash)
 
   maps = map_yaml_hash.values
+
+  # Need a hash for storing x and y offsets of maps. Will be updated
+  offset_hash = {}
+  for number in map_yaml_hash.keys
+    offset_hash[number] = [0,0]
+  end
 
   # Quits if tilesets don't match
   if not overlap?(maps, 'tileset_id')

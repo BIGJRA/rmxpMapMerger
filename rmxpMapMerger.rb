@@ -47,16 +47,6 @@ class DataImporterExporter
       end
     end
 
-
-
-    # Need a hash for storing x and y offsets of maps. Will be updated
-    offset_hash = {}
-    for number in map_numbers
-      offset_hash[number] = [0,0]
-    end
-
-    p offset_hash
-
     # Creates a hash from map number to yaml data
     map_yaml_hash = {}
     for num in map_numbers
@@ -64,7 +54,7 @@ class DataImporterExporter
     end
 
     # merges the maps and writes output
-    merged_map = get_merged_map(map_yaml_hash, offset_hash)
+    merged_map = get_merged_map(map_yaml_hash)
     if merged_map == nil
       return
     end
@@ -72,8 +62,6 @@ class DataImporterExporter
     target = output_dir + map_name_hash[map_numbers[0]]
     target = output_dir + map_name_hash[999] # Just for testing to create a new map
     write_yaml(merged_map, target) # stores new map in the name of the first one
-
-    p offset_hash
 
     puts "Successfully wrote to " + target + "."
 
