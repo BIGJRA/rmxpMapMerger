@@ -32,9 +32,10 @@ class DataImporterExporter
     end
 
     # Gets the map numbers to merge
-    nums = '688,695,694,703,704,705' #TODO Change this to empty string in working version
+    #nums = '688,695,694,703,704,705' #TODO Change this to empty string in working version
+    nums = '059,060,062,063,061'
     while !validate_nums_list(nums)
-      puts "Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
+      puts "Invalid input. Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
       nums = gets.chomp
     end
     map_numbers = nums.split(',').map {|num| num.rjust(3, "0").to_i }.sort
