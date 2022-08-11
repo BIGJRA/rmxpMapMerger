@@ -33,12 +33,14 @@ class DataImporterExporter
 
     # Gets the map numbers to merge
     #nums = '688,695,694,703,704,705' #TODO Change this to empty string in working version
-    nums = '059,060,062,063,061'
+    #nums = '059,060,062,063,061'
+    nums = '023,025,026'
     while !validate_nums_list(nums)
       puts "Invalid input. Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
       nums = gets.chomp
     end
     map_numbers = nums.split(',').map {|num| num.rjust(3, "0").to_i }.sort
+    puts "Merging maps: " + map_numbers.to_s[1..-2] + '...'
 
     # Create map hash for easier lookup
     map_name_hash = {}
@@ -54,14 +56,16 @@ class DataImporterExporter
       map_yaml_hash[num] = load_yaml(input_dir + map_name_hash[num])
     end
 
+    destination_num = map_numbers[0] # TO-DO: Swap these
+    destination_num = 999
+
     # merges the maps and writes output
-    merged_map = get_merged_map(map_yaml_hash)
+    merged_map = get_merged_map(map_yaml_hash, destination_num)
     if merged_map == nil
       return
     end
 
-    target = output_dir + map_name_hash[map_numbers[0]]
-    target = output_dir + map_name_hash[999] # Just for testing to create a new map
+    target = output_dir + map_name_hash[destination_num]
     write_yaml(merged_map, target) # stores new map in the name of the first one
 
     puts "Successfully wrote to " + target + "."

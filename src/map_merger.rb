@@ -13,7 +13,7 @@ VER_MAX = 500
 HOR_BUFFER = 10
 VER_BUFFER = 8
 
-def get_merged_map(map_yaml_hash)
+def get_merged_map(map_yaml_hash, destination_num)
 
   def overlap?(maps, field_name)
     if ['bgm', 'bgs'].include?(field_name)
@@ -36,19 +36,42 @@ def get_merged_map(map_yaml_hash)
     return true
   end
   
-  def merge_events(event_hash, offset_hash)
+  def merge_events(event_hash, offset_hash, destination_num)
     new_events = {}
+    event_num_offset_hash = {}
     current_event_num = 0
     event_hash.each do |map_num, events|
+      event_num_offset_hash[map_num] = current_event_num
       events.each do |original_position, event|
         new_x = event.x + offset_hash[map_num][0]
         new_y = event.y + offset_hash[map_num][1]
-        # p (event.x.to_s + ' ' + event.y.to_s + ' ' + new_x.to_s + ' ' + new_y.to_s)
         current_event_num += 1
         new_event = RPG::Event.new(new_x, new_y)
         new_event.id = current_event_num
         new_event.name = event.name
         new_event.pages = event.pages
+
+        # here we need to fix ID references as well as coordinates.
+        # So, we need both hashes to fix every page.
+        new_event.pages.each do |page|
+          page.list.each do |command|
+
+            if command.code == 201 then # Transfer Player. 
+              # 6 Params: ??? (ALWAYS IS 0 IN REBORN), Destination Map ID, Dest X, Dest Y, Retain, Fade
+              if offset_hash.keys.include?(command.parameters[1]) then
+                command.parameters[2] += offset_hash[command.parameters[1]][0]
+                command.parameters[3] += offset_hash[command.parameters[1]][1]
+                command.parameters[1] = destination_num
+              end
+            end
+
+
+
+
+
+          end
+        end
+        
         new_events[current_event_num] = new_event
       end
     end
@@ -263,7 +286,7 @@ def get_merged_map(map_yaml_hash)
   puts ("Merging event data...")
   event_hash = {}
   map_yaml_hash.keys.each {|num| event_hash[num] = map_yaml_hash[num].events}
-  merged_events = merge_events(event_hash, offset_hash)
+  merged_events = merge_events(event_hash, offset_hash, destination_num)
 
   merged_map = RPG::Map.new(merged_table.xsize, merged_table.ysize)
   merged_map.tileset_id = maps[0].tileset_id
