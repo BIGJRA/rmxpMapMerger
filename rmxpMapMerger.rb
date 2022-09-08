@@ -10,26 +10,23 @@ class DataImporterExporter
   def merge
 
     # Set up the directory paths
-    inp_path = File.expand_path($CONFIG.game_yaml_dir, __FILE__)
-    out_path = File.expand_path($CONFIG.modified_yaml_dir, __FILE__)
-
-    input_dir  = inp_path + '/'
-    output_dir = out_path + '/'
+    map_path = File.expand_path($CONFIG.game_yaml_dir, __FILE__)
+    map_dir  = inp_path + '/'
 
     print_separator(true)
     puts "  RMXP Map Merger"
     print_separator(true)
 
     # Check if the input directory exist
-    if not (File.exist? input_dir and File.directory? input_dir)
-      puts "Input directory #{input_dir} does not exist."
+    if not (File.exist? map_dir and File.directory? map_dir)
+      puts "Input directory #{map_dir} does not exist."
       puts "Double check config.yaml."
       puts
       return
     end
 
-    if not (File.exist? output_dir and File.directory? output_dir)
-      recursive_mkdir( output_dir )
+    if not (File.exist? map_dir and File.directory? map_dir)
+      recursive_mkdir( map_dir )
     end
 
     # Gets the map numbers to merge
@@ -43,7 +40,7 @@ class DataImporterExporter
 
     # Create map hash for easier lookup
     map_name_hash = {}
-    for file in Dir.entries(input_dir)
+    for file in Dir.entries(map_dir)
       if file[0..2] == "Map" && !!(file[3..5] =~ /^\d{3}$/)
         map_name_hash[file[3..5].to_i] = file
       end
@@ -53,10 +50,10 @@ class DataImporterExporter
     map_yaml_hash = {}
     for num in map_numbers
       if map_name_hash[num].nil?
-        p "Map with number " + num.to_s + " not found. Quitting..."
+        puts "Map with number " + num.to_s + " not found. Quitting..."
         return
       end
-      map_yaml_hash[num] = load_yaml(input_dir + map_name_hash[num])
+      map_yaml_hash[num] = load_yaml(map_dir + map_name_hash[num])
     end
 
     destination_num = map_numbers[0]
@@ -67,7 +64,7 @@ class DataImporterExporter
     end
 
     # stores new map in the name of the first one
-    write_target = output_dir + map_name_hash[destination_num]
+    write_target = map_dir + map_name_hash[destination_num]
     write_yaml(merged_map, write_target) 
 
     puts "Successfully wrote to " + write_target + "."
@@ -76,16 +73,16 @@ class DataImporterExporter
     delete = false #TODO
     if delete
       for map_no in map_numbers.slice(1, map_numbers.length + 1)
-        delete_target = output_dir + map_name_hash[map_no]
+        delete_target = map_dir + map_name_hash[map_no]
         delete_yaml(delete_target)
       end
-      puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s + "."
+      puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s[1..-2] + "."
     end
 
     # fixes MapInfos.yaml
-    mapInfo = load_yaml(input_dir + "MapInfos.yaml")
+    mapInfo = load_yaml(map_dir + "MapInfos.yaml")
     mapInfo = fix_map_yaml(mapInfo, map_numbers)
-    write_yaml(mapInfo, output_dir + "MapInfos.yaml",)
+    write_yaml(mapInfo, map_dir + "MapInfos.yaml",)
 
     puts "Successfully changed mapInfo.yaml."
 
