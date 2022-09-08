@@ -2,6 +2,7 @@ $COMMAND = 'merge'
 $PROJECT_DIR = Dir.pwd + '/'
 
 require_relative 'src/map_merger'
+require_relative 'src/mapInfos_fixer'
 require_relative 'src/common'
 require_relative 'src/validation'
 
@@ -51,21 +52,42 @@ class DataImporterExporter
     # Creates a hash from map number to yaml data
     map_yaml_hash = {}
     for num in map_numbers
+      if map_name_hash[num].nil?
+        p "Map with number " + num.to_s + " not found. Quitting..."
+        return
+      end
       map_yaml_hash[num] = load_yaml(input_dir + map_name_hash[num])
     end
 
     destination_num = map_numbers[0]
-
     # merges the maps and writes output
     merged_map = get_merged_map(map_yaml_hash, destination_num)
     if merged_map == nil
       return
     end
 
-    target = output_dir + map_name_hash[destination_num]
-    write_yaml(merged_map, target) # stores new map in the name of the first one
+    # stores new map in the name of the first one
+    write_target = output_dir + map_name_hash[destination_num]
+    write_yaml(merged_map, write_target) 
 
-    puts "Successfully wrote to " + target + "."
+    puts "Successfully wrote to " + write_target + "."
+
+    # deletes other map YAMLS
+    delete = false #TODO
+    if delete
+      for map_no in map_numbers.slice(1, map_numbers.length + 1)
+        delete_target = output_dir + map_name_hash[map_no]
+        delete_yaml(delete_target)
+      end
+      puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s + "."
+    end
+
+    # fixes MapInfos.yaml
+    mapInfo = load_yaml(input_dir + "MapInfos.yaml")
+    mapInfo = fix_map_yaml(mapInfo, map_numbers)
+    write_yaml(mapInfo, output_dir + "MapInfos.yaml",)
+
+    puts "Successfully changed mapInfo.yaml."
 
   end
 end
