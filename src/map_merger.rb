@@ -282,18 +282,16 @@ def get_merged_map(map_yaml_hash, destination_num)
   end
 
   # Warns if other properties don't match. Doesn't need to quit.
-  ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step', 'autoplay_bgm'].each do |property| 
+  ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step'].each do |property| 
     if not overlap?(maps, property)
       puts "WARNING: These maps have different " + property + ". Using values from the first map." 
     end
   end
 
-  puts ("Merging tile data...")
   table_hash = {}
   map_yaml_hash.keys.each {|num| table_hash[num] = map_yaml_hash[num].data}
   merged_table = merge_tables(table_hash, offset_hash)
 
-  puts ("Merging event data...")
   event_hash = {}
   map_yaml_hash.keys.each {|num| event_hash[num] = map_yaml_hash[num].events}
   merged_events = merge_events(event_hash, offset_hash, destination_num)

@@ -13,54 +13,13 @@ game_yaml_dir: ../../reborn/DataExport
 #  Miscellaneous Parameters
 #-------------------------------------------------------------------------------
 
-# This array specifies all .rxdata files which are to be ignored by the data
-# exporter script.  Note that the script exporter doesn't look at this array,
-# since it always exports the Scripts.rxdata file.  Add entries to this array
-# if you do not wish to version certain .rxdata files.
-data_ignore_list:
-  - "Scripts.rxdata"
-  - "PkmnAnimations.rxdata"
-  - "TilesetsTemp.rxdata"
-  - "fieldnotes.rxdata"
-
-# This array specifies all .rxdata files that should be imported but not
-# exported. They'll only be exported in case the yaml file is missing.
-import_only_list:
-  - "Actors.rxdata"
-  - "Armors.rxdata"
-  - "Enemies.rxdata"
-  - "Items.rxdata"
-  - "Skills.rxdata"
-  - "States.rxdata"
-  - "Troops.rxdata"
-  - "Weapons.rxdata"
+# This parameter determines whether the extra map files are deleted or left alone.
+#   Valid values:  [true || false]
+delete_other_maps: true
 
 # This parameter determines whether the import/export scripts print verbose
 # information such as each filename as it is imported or exported and timing
 # information.  Errors are always printed.
 #   Valid values:  [true || false]
-verbose: true
+verbose: false
 
-# This is the value always used for System object's magic_number field.  RMXP
-# changes this value whenever System.rxdata is modified, so having a default
-# value prevents unnecessary conflicts when versioning the System.yaml file.
-# If, for any reason, this causes problems, you can disable the default magic
-# number functionality by setting the value -1.
-magic_number: 77323823
-
-# This is the value always used for System object's edit_map_id field.  RMXP
-# changes this value whenever the editor changes maps.  When exiting the
-# program, the currently selected map's id is saved in this field.  To prevent
-# unnecessary conflicts, we are using a default map id.  If, for any reason,
-# this causes problems, you can disable the default functionality by setting
-# the value -1.
-startup_map: 827
-
-# Glob mask for files that should always be included in a patch.
-patch_always: '{version,Scripts/*.rb,Scripts/Reborn/*}'
-
-# Glob mask to filter changed files for patch.
-patch_changed: '{Readme.txt,Audio/*,Data/*,DataExport/*,Fonts/*,Graphics/*}'
-
-# Base commit reference for generating a patch.
-base_commit: 07e4a36c021fdca5860562fd12f549c811446ee9

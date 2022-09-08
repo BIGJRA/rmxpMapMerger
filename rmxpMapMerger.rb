@@ -6,22 +6,22 @@ require_relative 'src/mapInfos_fixer'
 require_relative 'src/common'
 require_relative 'src/validation'
 
-class DataImporterExporter
+class DataMerger
   def merge
 
     # Set up the directory paths
     map_path = File.expand_path($CONFIG.game_yaml_dir, __FILE__)
-    map_dir  = inp_path + '/'
+    map_dir  = map_path + '/'
 
     print_separator(true)
-    puts "  RMXP Map Merger"
+    puts_verbose("RMXP Map Merger")
     print_separator(true)
 
     # Check if the input directory exist
     if not (File.exist? map_dir and File.directory? map_dir)
-      puts "Input directory #{map_dir} does not exist."
-      puts "Double check config.yaml."
-      puts
+      puts_verbose("Input directory #{map_dir} does not exist.")
+      puts_verbose("Double check config.yaml.")
+      puts_verbose("")
       return
     end
 
@@ -32,12 +32,12 @@ class DataImporterExporter
     # Gets the map numbers to merge
     nums = ''
     while !validate_nums_list(nums)
-      puts "Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
+      puts ("Enter the 2+ map numbers you want to merge, separated by commas (no whitespace).")
       nums = gets.chomp
     end
     map_numbers = nums.split(',').map {|num| num.rjust(3, "0").to_i }.sort
-    puts "Merging maps: " + map_numbers.to_s[1..-2] + '...'
-
+    puts_verbose("Merging maps: " + map_numbers.to_s[1..-2] + '...')
+    
     # Create map hash for easier lookup
     map_name_hash = {}
     for file in Dir.entries(map_dir)
@@ -50,7 +50,7 @@ class DataImporterExporter
     map_yaml_hash = {}
     for num in map_numbers
       if map_name_hash[num].nil?
-        puts "Map with number " + num.to_s + " not found. Quitting..."
+        puts_verbose("Map with number " + num.to_s + " not found. Quitting...")
         return
       end
       map_yaml_hash[num] = load_yaml(map_dir + map_name_hash[num])
@@ -67,25 +67,26 @@ class DataImporterExporter
     write_target = map_dir + map_name_hash[destination_num]
     write_yaml(merged_map, write_target) 
 
-    puts "Successfully wrote to " + write_target + "."
+    puts_verbose("Successfully wrote to " + write_target + ".")
 
     # deletes other map YAMLS
-    delete = false #TODO
-    if delete
+    if $CONFIG.delete_other_maps
       for map_no in map_numbers.slice(1, map_numbers.length + 1)
         delete_target = map_dir + map_name_hash[map_no]
         delete_yaml(delete_target)
       end
-      puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s[1..-2] + "."
+      puts_verbose("Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s[1..-2] + ".")
     end
 
     # fixes MapInfos.yaml
     mapInfo = load_yaml(map_dir + "MapInfos.yaml")
-    mapInfo = fix_map_yaml(mapInfo, map_numbers)
-    write_yaml(mapInfo, map_dir + "MapInfos.yaml",)
+    mapInfo = fix_map_yaml(mapInfo, map_numbers, $CONFIG.delete_other_maps)
+    write_yaml(mapInfo, map_dir + "MapInfos.yaml")
 
-    puts "Successfully changed mapInfo.yaml."
+    puts_verbose("Successfully changed mapInfo.yaml.")
 
+    puts("Complete!")
+    
   end
 end
 
@@ -103,7 +104,7 @@ end
 # Initialize configuration parameters
 $CONFIG = Config.new(config)
 
-plugin = DataImporterExporter.new
+plugin = DataMerger.new
 
 if $COMMAND == "merge"
   plugin.merge
