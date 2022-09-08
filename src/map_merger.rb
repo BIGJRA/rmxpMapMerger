@@ -75,6 +75,10 @@ def get_merged_map(map_yaml_hash, destination_num)
               end
             end
 
+            if command.code == 209 then # Set Move Route
+              # 2 Params: Event ID, and then a list of MoveCommand objects. I shouldn't have to change the latter it seems. 
+              command.parameters[0] += event_num_offset_hash[map_num]
+            end
           end
         end
         
@@ -303,7 +307,6 @@ def get_merged_map(map_yaml_hash, destination_num)
   merged_map.encounter_list = maps[0].encounter_list
   merged_map.encounter_step = maps[0].encounter_step
   merged_map.autoplay_bgm = maps[0].autoplay_bgm
-  #merged_map.events = maps[0].events # will change this
   merged_map.events = merged_events
   merged_map.data = merged_table
   return merged_map
