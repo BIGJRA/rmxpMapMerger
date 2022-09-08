@@ -73,7 +73,7 @@ class DataImporterExporter
     puts "Successfully wrote to " + write_target + "."
 
     # deletes other map YAMLS
-    delete = false #TODO
+    delete = true #TODO
     if delete
       for map_no in map_numbers.slice(1, map_numbers.length + 1)
         delete_target = output_dir + map_name_hash[map_no]
