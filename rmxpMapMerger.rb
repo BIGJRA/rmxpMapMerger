@@ -2,6 +2,7 @@ $COMMAND = 'merge'
 $PROJECT_DIR = Dir.pwd + '/'
 
 require_relative 'src/map_merger'
+require_relative 'src/mapInfos_fixer'
 require_relative 'src/common'
 require_relative 'src/validation'
 
@@ -33,8 +34,8 @@ class DataImporterExporter
 
     # Gets the map numbers to merge
     #nums = '688,695,694,703,704,705' #TODO Change this to empty string in working version
-    #nums = '059,060,062,063,061'
-    nums = '023,025,026'
+    nums = '059,060,062,063,061'
+    # nums = '023,025,026'
     while !validate_nums_list(nums)
       puts "Invalid input. Enter the 2+ map numbers you want to merge, separated by commas (no whitespace)."
       nums = gets.chomp
@@ -61,7 +62,7 @@ class DataImporterExporter
     end
 
     destination_num = map_numbers[0] # TO-DO: Swap these
-    destination_num = 999
+
 
     # merges the maps and writes output
     merged_map = get_merged_map(map_yaml_hash, destination_num)
@@ -76,12 +77,21 @@ class DataImporterExporter
     puts "Successfully wrote to " + write_target + "."
 
     # deletes other map YAMLS
-    for map_no in map_numbers.slice(1, map_numbers.length + 1)
-      delete_target = output_dir + map_name_hash[map_no]
-      delete_yaml(delete_target)
+    delete = false #TODO
+    if delete
+      for map_no in map_numbers.slice(1, map_numbers.length + 1)
+        delete_target = output_dir + map_name_hash[map_no]
+        delete_yaml(delete_target)
+      end
+      puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s + "."
     end
 
-    puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s + "."
+    # fixes MapInfos.yaml
+    mapInfo = load_yaml(input_dir + "MapInfos.yaml")
+    mapInfo = fix_map_yaml(mapInfo, map_numbers)
+    write_yaml(mapInfo, output_dir + "MapInfos.yaml",)
+
+    puts "Successfully changed mapInfo.yaml."
 
   end
 end
