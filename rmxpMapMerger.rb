@@ -53,6 +53,10 @@ class DataImporterExporter
     # Creates a hash from map number to yaml data
     map_yaml_hash = {}
     for num in map_numbers
+      if map_name_hash[num].nil?
+        p "Map with number " + num.to_s + " not found. Quitting..."
+        return
+      end
       map_yaml_hash[num] = load_yaml(input_dir + map_name_hash[num])
     end
 
@@ -65,10 +69,19 @@ class DataImporterExporter
       return
     end
 
-    target = output_dir + map_name_hash[destination_num]
-    write_yaml(merged_map, target) # stores new map in the name of the first one
+    # stores new map in the name of the first one
+    write_target = output_dir + map_name_hash[destination_num]
+    write_yaml(merged_map, write_target) 
 
-    puts "Successfully wrote to " + target + "."
+    puts "Successfully wrote to " + write_target + "."
+
+    # deletes other map YAMLS
+    for map_no in map_numbers.slice(1, map_numbers.length + 1)
+      delete_target = output_dir + map_name_hash[map_no]
+      delete_yaml(delete_target)
+    end
+
+    puts "Successfully deleted maps " + map_numbers.slice(1, map_numbers.length + 1).to_s + "."
 
   end
 end

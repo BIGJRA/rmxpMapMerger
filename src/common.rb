@@ -448,3 +448,10 @@ def write_yaml(map_object, filename)
     output_file.write(yaml_content)
   end
 end
+
+def delete_yaml(filename)
+  begin 
+    File.delete(filename)
+  rescue Errno::ENOENT
+  end
+end
