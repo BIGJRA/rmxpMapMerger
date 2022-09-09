@@ -55,6 +55,7 @@ class Config
   attr_accessor :import_only_list
   attr_accessor :verbose
   attr_accessor :delete_other_maps
+  attr_accessor :fix_other_maps
 
   def initialize(config)
     @data_dir         = config['data_dir']
@@ -65,6 +66,7 @@ class Config
     @import_only_list = config['import_only_list']
     @verbose          = config['verbose']
     @delete_other_maps= config['delete_other_maps']
+    @fix_other_maps   = config['fix_other_maps']
   end
 end
 

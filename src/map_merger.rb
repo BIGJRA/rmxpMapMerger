@@ -307,5 +307,5 @@ def get_merged_map(map_yaml_hash, destination_num)
   merged_map.autoplay_bgm = maps[0].autoplay_bgm
   merged_map.events = merged_events
   merged_map.data = merged_table
-  return merged_map
+  return merged_map, offset_hash
 end

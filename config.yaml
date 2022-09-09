@@ -17,9 +17,14 @@ game_yaml_dir: ../../reborn/DataExport
 #   Valid values:  [true || false]
 delete_other_maps: true
 
+# This parameter determines whether all other map files are scanned for warp events
+# to merged maps, and fixed. 
+#   Valid values:  [true || false]
+fix_other_maps: true
+
 # This parameter determines whether the import/export scripts print verbose
 # information such as each filename as it is imported or exported and timing
 # information.  Errors are always printed.
 #   Valid values:  [true || false]
-verbose: false
+verbose: true
 
