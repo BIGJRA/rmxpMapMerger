@@ -34,13 +34,17 @@ class DataMerger
     nums = ''
 
     # For testing - TODO, comment these out for real version
-    nums = '8,9'
+    # nums = '8,9'
 
 
     while !validate_nums_list(nums)
-      puts ("Enter the 2+ map numbers you want to merge, separated by commas (no whitespace).")
+      puts ("Enter the 2+ map numbers you want to merge, separated by commas, or press ENTER to quit...")
       nums = gets.chomp
+      if nums == ""
+        return
+      end
     end
+
     map_numbers = nums.split(',').map {|num| num.rjust(3, "0").to_i }.sort
     puts_verbose("Merging maps: " + map_numbers.to_s[1..-2] + '...')
     

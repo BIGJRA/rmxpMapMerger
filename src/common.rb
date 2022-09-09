@@ -70,6 +70,36 @@ class Config
   end
 end
 
+def yaml_stable_ref(input_file, output_file)
+  i = 1
+  j = 1
+  queue = Queue.new
+  File.open(output_file, 'w') do |output|
+    File.open(input_file, 'r').each do |line|
+      if ! line[' &'].nil? || ! line[' *'].nil?
+        match = line.match(/^ *(?:-|[a-zA-Z0-9_]++:) (?<type>[&*])(?<reference>[0-9]++)/)
+        unless match.nil?
+          if match[:type] === '&'
+            queue.push(match[:reference])
+            line[' &' + match[:reference]] = ' &' + i.to_s
+            i += 1
+          elsif match[:reference] === queue.pop()
+            line[' *' + match[:reference]] = ' *' + j.to_s
+            j += 1
+            if queue.empty?
+              i = 1
+              j = 1
+            end
+          else
+            raise "Unexpected alias " + match[:reference]
+          end
+        end
+      end
+      output.print line
+    end
+  end
+end
+
 ###
 
 def load_yaml(yaml_file)
@@ -82,10 +112,12 @@ end
 
 def write_yaml(map_object, filename)
   #p YAML::dump(map_object)
-  File.open(filename, "w+") do |output_file|
+  temp_name = Dir.tmpdir() + '/' + "tmp"
+  File.open(temp_name, "w+") do |tmp|
     yaml_content = YAML::dump({'root' => map_object})
     #p yaml_content
-    output_file.write(yaml_content)
+    tmp.write(yaml_content)
+    yaml_stable_ref(tmp, filename)
   end
 end
 
