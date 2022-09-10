@@ -135,4 +135,6 @@ plugin = DataMerger.new
 
 if $COMMAND == "merge"
   plugin.merge
+  puts "Press ENTER to quit."
+  gets
 end
