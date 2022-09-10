@@ -1,12 +1,6 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
-require 'yaml'
-require 'tmpdir'
-require_relative 'common.rb'
-require_relative '../rmxp/rgss_internal.rb'
-require_relative '../rmxp/rgss_mod.rb'
-require_relative '../rmxp/rgss_rpg.rb'
-require_relative '../rmxp/rgss.rb'
+require_relative 'common'
 
 def fix_map_yaml(map_yaml, map_numbers, delete_other_maps=true)
   # Makes sure remaining map has parent_id that is not deleted

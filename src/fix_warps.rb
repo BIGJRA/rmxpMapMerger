@@ -1,11 +1,6 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
-require 'yaml'
-require 'tmpdir'
-require_relative '../rmxp/rgss_internal.rb'
-require_relative '../rmxp/rgss_mod.rb'
-require_relative '../rmxp/rgss_rpg.rb'
-require_relative '../rmxp/rgss.rb'
+require_relative 'common'
 
 def get_fixed_external_map(external_map_yaml, offset_hash, destination_num)
   changed = false

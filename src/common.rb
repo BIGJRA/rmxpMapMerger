@@ -3,7 +3,7 @@
 
 require 'yaml'
 require 'tmpdir'
-require 'parallel'
+require_relative '../rmxp/rgss.rb'
 
 CHECKSUMS_FILE = 'checksums.csv'
 
