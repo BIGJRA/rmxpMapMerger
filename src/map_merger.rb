@@ -1,11 +1,6 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
-require 'yaml'
-require 'tmpdir'
-require_relative '../rmxp/rgss_internal.rb'
-require_relative '../rmxp/rgss_mod.rb'
-require_relative '../rmxp/rgss_rpg.rb'
-require_relative '../rmxp/rgss.rb'
+require_relative 'common'
 
 HOR_MAX = 500
 VER_MAX = 500
@@ -282,18 +277,16 @@ def get_merged_map(map_yaml_hash, destination_num)
   end
 
   # Warns if other properties don't match. Doesn't need to quit.
-  ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step', 'autoplay_bgm'].each do |property| 
+  ['autoplay_bgm', 'bgm', 'autoplay_bgs', 'bgs', 'encounter_list', 'encounter_step'].each do |property| 
     if not overlap?(maps, property)
       puts "WARNING: These maps have different " + property + ". Using values from the first map." 
     end
   end
 
-  puts ("Merging tile data...")
   table_hash = {}
   map_yaml_hash.keys.each {|num| table_hash[num] = map_yaml_hash[num].data}
   merged_table = merge_tables(table_hash, offset_hash)
 
-  puts ("Merging event data...")
   event_hash = {}
   map_yaml_hash.keys.each {|num| event_hash[num] = map_yaml_hash[num].events}
   merged_events = merge_events(event_hash, offset_hash, destination_num)
@@ -309,5 +302,5 @@ def get_merged_map(map_yaml_hash, destination_num)
   merged_map.autoplay_bgm = maps[0].autoplay_bgm
   merged_map.events = merged_events
   merged_map.data = merged_table
-  return merged_map
+  return merged_map, offset_hash
 end
