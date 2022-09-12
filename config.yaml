@@ -7,7 +7,7 @@
 
 # Modify this path to specify where your .yaml files reside
 
-game_yaml_dir: ../../reborn/DataExport
+game_yaml_dir: .
 
 #-------------------------------------------------------------------------------
 #  Miscellaneous Parameters
